@@ -1,0 +1,41 @@
+# http://www.cnblogs.com/feixuelove1009/p/5541632.html
+def outer(func):
+    def inner():
+        print("我是内层函数")
+        return inner()         #只返回函数体，与inner()区别
+
+def foo():
+    print("我是外层函数")
+
+outer(foo)                    # 参数是foo函数名，不执行outer
+outer(foo())                  # 参数是foo函数返回值，返回值为None
+
+# 无参数
+def outerr(func):
+    def inner2():
+        print("认证成功！")
+        result = func()
+        print("日志添加成功")
+        return result
+    return inner2
+
+@outerr
+def f1():
+    print("业务部门1数据接口......")
+
+# 万能参数
+def outerrr(func):
+    def innerrr(*args,**kwargs):
+        print("认证成功！")
+        result = func(*args,**kwargs)
+        print("日志添加成功")
+        return result
+    return innerrr
+
+@outerrr
+def f1(name,age):
+
+    print("%s 正在连接业务部门1数据接口......"%name)
+
+# 调用方法
+f1("jack",18)
