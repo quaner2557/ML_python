@@ -8,7 +8,23 @@ Hello = type('Hello', (object, ), dict(hello = fn)) # 参数分别为类名；�
 ########################################################
 # metaclass
 # 可以把类看成是metaclass创建出来的“实例”
+# __new__()方法接收到的参数依次是：
+# 当前准备创建的类的对象；
+# 类的名字；
+# 类继承的父类集合；
+# 类的方法集合。
 
+class ListMetaclass(type):
+    def __new__(cls, name, bases, attrs):
+        attrs['add'] = lambda self, value: self.append(value)
+        return type.__new__(cls, name, bases, attrs)
+
+
+class Mylist(list, metaclass=ListMetaclass):
+    pass
+
+
+########################################################
 #ORM:object relational mapping 对象-关系映射
 #把关系数据库的一行映射为一个对象，也就是一个类对应一个表
 #ORM框架所有的类只能动态定义
