@@ -15,3 +15,6 @@ palette = array( [ [0,0,0],                # black
                   [0,0,255],              # blue
                   [255,255,255] ] )       # white
 print(palette)
+B = arange(12).reshape(3,4)
+M = mat(B.copy())
+print(M[:,M.A[0,:]>1])
