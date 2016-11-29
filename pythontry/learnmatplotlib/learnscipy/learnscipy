@@ -1,4 +1,15 @@
-import scipy.special as S
-S.gamma(4)
-S.log1p(1e-20)
+import numpy as np
+from scipy import linalg as lin
+arr = np.array([[1,2],[3,4]])
+lin.det(arr)
+
+from scipy import optimize
+from matplotlib import pyplot as plt
+def f(x):
+    return x**2 + 10*np.sin(x)
+x = np.arange(-10, 10, 0.1)
+plt.plot(x,f(x))
+plt.show()
+optimize.fmin_bfgs(f,0)
+
 
