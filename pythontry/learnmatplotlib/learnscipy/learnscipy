@@ -1,0 +1,4 @@
+import scipy.special as S
+S.gamma(4)
+S.log1p(1e-20)
+
