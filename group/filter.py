@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 from sklearn.feature_selection import mutual_info_regression
 
+
 # First step: use mutual information to reduce the dimension
 mi = mutual_info_regression(breast_train_scaled.iloc[0:78,:], label_train)
 mi /= np.max(mi)
