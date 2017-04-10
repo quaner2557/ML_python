@@ -29,19 +29,26 @@ label_train = pd.DataFrame(label_train)
 breast_test = pd.DataFrame(breast_test,index=range(1,20),columns=range(1,24482))
 label_test = pd.DataFrame(label_test)
 
-# 归一化
+
+# 修改outlier并归一化
 from sklearn import preprocessing
 
+for i in range(78):
+    for j in range(24481):
+        if breast_train.iloc[i,j] > 2:
+            breast_train.iloc[i,j] = 2
 
-(breast_train-breast_train.mean)/breast_train.std > 3
+for i in range(19):
+    for j in range(24481):
+        if breast_test.iloc[i,j] > 2:
+            breast_test.iloc[i,j] = 2
+
+breast_train_scaled = preprocessing.scale(breast_train) #  scale处理之后为零均值和单位方差
+breast_test_scaled = preprocessing.scale(breast_test)
+breast_train_scaled = pd.DataFrame(breast_train_scaled,index=range(1,79),columns=range(1,24482))
+breast_test_scaled = pd.DataFrame(breast_test_scaled,index=range(1,20),columns=range(1,24482))
 
 
-
-
-breast_train = preprocessing.normalize(breast_train.T)
-breast_train = breast_train.T
-breast_test = preprocessing.normalize(breast_test.T)
-breast_test = breast_test.T
 
 
  
