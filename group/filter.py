@@ -11,9 +11,13 @@ import numpy as np
 import pandas as pd
 from sklearn.feature_selection import mutual_info_regression
 
+np.random.seed(0)
 
 # First step: use mutual information to reduce the dimension
 mi = mutual_info_regression(breast_train_scaled.iloc[0:78,:], label_train)
 mi /= np.max(mi)
 
-breast_train_scaled_1 = breast_train_scaled.iloc[:, mi > 0.3] # 0.3 is a threshold ,the rest features are 1744
+
+# 0.349335 as the threshold ,the rest features are 1000                                                                  
+breast_train_scaled_1 = breast_train_scaled.iloc[:, mi > 0.41455]
+
