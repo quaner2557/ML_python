@@ -3,6 +3,8 @@
 Created on Fri Apr 21 12:03:50 2017
 
 @author: quaner
+
+import breast_preprocessed_mrmr.spydata
 """
 
 import numpy as np
@@ -22,5 +24,7 @@ oder = np.argsort(-cof)
 breast_train_50_oder = np.reshape(breast_train_50[:,oder.T],(79,50))
 data = breast_train_50_oder[:78,:]
 
-from HAPSODS import HAPSO
-[gbestpos,gbestval,gbestvals] = HAPSO(50,data,50,10,1000,label_train)
+import HAPSODS
+from imp import reload
+reload(HAPSODS) 
+[gbestpos,gbestval,gbestvals] = HAPSODS.HAPSO(50,data,50,10,50,label_train)

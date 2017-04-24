@@ -4,33 +4,23 @@ Created on Fri Apr 14 14:51:49 2017
 
 @author: quaner
 """
-import numpy as np
-import pandas as pd
-import random
-import math
-            
-# 根据SVM权重进行排序 
-from sklearn.svm import SVC
-from sklearn.feature_selection import RFE
-
-trainX = breast_train_50[:78,:]
-svc = SVC(kernel="linear", C=1)
-rfe = RFE(estimator=svc, n_features_to_select=50, step=0.1)
-rfe.fit(trainX, label_train)
-cof = rfe.estimator_.coef_
-
-oder = np.argsort(-cof)
-breast_train_50_oder = np.reshape(breast_train_50[:,oder.T],(79,50))
- 
 
 def HAPSO(ps,data,features,div,Maxiters,label_train):
     from sklearn.model_selection import StratifiedShuffleSplit
     from sklearn.model_selection import GridSearchCV
+    from sklearn.svm import SVC
+    import numpy as np
+    import pandas as pd
+    import random
+    import math
     F=1                                  # 摄动因子最大值
     F_MIN=0.5                            # 摄动因子最小值
     F_DEC=(F-F_MIN)/Maxiters             # 摄动因子减小量
     gbestvals = {}                       # 用于保存最优值
     fp = {}                              # 用于保存进化因子
+    C_range = np.logspace(-1, 3, 5)
+    gamma_range = np.logspace(-2, 2, 5)
+    param_grid = dict(gamma=gamma_range, C=C_range)
     """
        初始化，根据权重分组选取
        速度区间为[-2,2]
@@ -50,9 +40,6 @@ def HAPSO(ps,data,features,div,Maxiters,label_train):
             if b>0:
                 ind.append(a)
         traindata = data[:,ind]
-        C_range = np.logspace(-2, 5, 8)
-        gamma_range = np.logspace(-4, 3, 8)
-        param_grid = dict(gamma=gamma_range, C=C_range)
         cv = StratifiedShuffleSplit(test_size=0.2, random_state=40)
         grid = GridSearchCV(SVC(), param_grid=param_grid, cv=cv)
         grid.fit(traindata, label_train)
@@ -78,6 +65,7 @@ def HAPSO(ps,data,features,div,Maxiters,label_train):
      惯性系数，加速度系数，进化因子及进化状态
     """
     for iters in range(Maxiters):
+         print(iters)
          rannum1 = np.random.rand(ps,features)
          rannum2 = np.random.rand(ps,features)
          ac11 = rannum1*ac1
@@ -97,9 +85,6 @@ def HAPSO(ps,data,features,div,Maxiters,label_train):
                  if b>0:
                      ind.append(a)
              traindata = data[:,ind]
-             C_range = np.logspace(-2, 5, 8)
-             gamma_range = np.logspace(-4, 3, 8)
-             param_grid = dict(gamma=gamma_range, C=C_range)
              cv = StratifiedShuffleSplit(test_size=0.2, random_state=40)
              grid = GridSearchCV(SVC(), param_grid=param_grid, cv=cv)
              grid.fit(traindata, label_train)
@@ -123,15 +108,12 @@ def HAPSO(ps,data,features,div,Maxiters,label_train):
             # 变异                 
             dimchange = np.random.randint(0.1*features)                 
             change = random.sample(range(features),dimchange)                   
-            tempPos[0,change] = 1 - tempPos[0,change]                  
+            tempPos[change] = 1 - tempPos[change]                  
             ind = []
             for a,b in enumerate(tempPos):
                  if b>0:
                      ind.append(a)
             traindata = data[:,ind]
-            C_range = np.logspace(-2, 5, 8)
-            gamma_range = np.logspace(-4, 3, 8)
-            param_grid = dict(gamma=gamma_range, C=C_range)
             cv = StratifiedShuffleSplit(test_size=0.2, random_state=40)
             grid = GridSearchCV(SVC(), param_grid=param_grid, cv=cv)
             grid.fit(traindata, label_train)
@@ -210,6 +192,8 @@ def getState(EvoFac,LastState):
   return CurrentState
 
 def getEvoFactor(pos,idgbest):
+   import numpy as np
+   import math
    ps=pos.shape[0]
    AveDistances=np.zeros((ps,1))
    for i in range(ps):
