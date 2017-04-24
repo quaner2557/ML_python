@@ -24,7 +24,7 @@ breast_train_50_oder = np.reshape(breast_train_50[:,oder.T],(79,50))
  
 
 def HAPSO(ps,data,features,div,Maxiters,label_train):
-    from sklearn.cross_validation import StratifiedShuffleSplit
+    from sklearn.model_selection import StratifiedShuffleSplit
     from sklearn.model_selection import GridSearchCV
     F=1                                  # 摄动因子最大值
     F_MIN=0.5                            # 摄动因子最小值
@@ -53,7 +53,7 @@ def HAPSO(ps,data,features,div,Maxiters,label_train):
         C_range = np.logspace(-2, 5, 8)
         gamma_range = np.logspace(-4, 3, 8)
         param_grid = dict(gamma=gamma_range, C=C_range)
-        cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=40)
+        cv = StratifiedShuffleSplit(test_size=0.2, random_state=40)
         grid = GridSearchCV(SVC(), param_grid=param_grid, cv=cv)
         grid.fit(traindata, label_train)
         out[i] = grid.best_score_/(1+0.01*len(ind))
@@ -100,7 +100,7 @@ def HAPSO(ps,data,features,div,Maxiters,label_train):
              C_range = np.logspace(-2, 5, 8)
              gamma_range = np.logspace(-4, 3, 8)
              param_grid = dict(gamma=gamma_range, C=C_range)
-             cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=40)
+             cv = StratifiedShuffleSplit(test_size=0.2, random_state=40)
              grid = GridSearchCV(SVC(), param_grid=param_grid, cv=cv)
              grid.fit(traindata, label_train)
              tempout[q] = grid.best_score_/(1+0.01*len(ind))
@@ -132,7 +132,7 @@ def HAPSO(ps,data,features,div,Maxiters,label_train):
             C_range = np.logspace(-2, 5, 8)
             gamma_range = np.logspace(-4, 3, 8)
             param_grid = dict(gamma=gamma_range, C=C_range)
-            cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=40)
+            cv = StratifiedShuffleSplit(test_size=0.2, random_state=40)
             grid = GridSearchCV(SVC(), param_grid=param_grid, cv=cv)
             grid.fit(traindata, label_train)
             tempPosval = grid.best_score_/(1+0.01*len(ind))
@@ -219,6 +219,6 @@ def getEvoFactor(pos,idgbest):
 
    Dmax=max(AveDistances)
    Dmin=min(AveDistances)
-   Dgbest=AveDistances(idgbest)
+   Dgbest=AveDistances[idgbest]
    EvoFac=(Dgbest-Dmin)/(Dmax-Dmin)
    return  EvoFac
