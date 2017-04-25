@@ -8,7 +8,6 @@ import breast_preprocessed_mrmr.spydata
 """
 
 import numpy as np
-import pandas as pd
             
 # 根据SVM权重进行排序 
 from sklearn.svm import SVC
@@ -27,4 +26,6 @@ data = breast_train_50_oder[:78,:]
 import HAPSODS
 from imp import reload
 reload(HAPSODS) 
-[gbestpos,gbestval,gbestvals] = HAPSODS.HAPSO(50,data,50,10,50,label_train)
+[gbestpos,gbestval,gbestvals,iterbestvals,pbestpos,pos] = HAPSODS.HAPSO2(50,data,50,10,3000,label_train)
+
+
