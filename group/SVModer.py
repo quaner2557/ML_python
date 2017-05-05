@@ -8,6 +8,7 @@ import breast_preprocessed_mrmr.spydata
 """
 
 import numpy as np
+
             
 # 根据SVM权重进行排序 
 from sklearn.svm import SVC
@@ -23,10 +24,12 @@ oder = np.argsort(-cof)
 breast_train_50_oder = np.reshape(breast_train_50[:,oder.T],(79,50))
 data = breast_train_50_oder[:78,:]
 
+import os
+os.chdir("/media/quan/软件/AAAAA/ML_python/group")
 import APSOmodule
 from imp import reload
 reload(APSOmodule) 
-[gbestpos,gbestval,gbestvals,iterbestvals,pbestpos,pos] = APSOmodule.HAPSO3(50,data,50,10,3000,label_train)
+[gbestpos,gbestval,gbestvals,iterbestvals,pbestpos,pos] = APSOmodule.HAPSO3(50,data,50,10,2000,label_train)
 
 
 from sklearn.model_selection import StratifiedShuffleSplit
@@ -50,3 +53,6 @@ print("The best parameters are %s with a score of %0.2f"
 clf = SVC(kernel='rbf', C=2).fit(traindata, label_train)
 clf.score(testdata, label_test)
 clf.score(traindata, label_train)    
+
+
+

@@ -357,11 +357,12 @@ def HAPSO2(ps,data,features,div,Maxiters,label_train):
 
 """
 HAPSO3 增加了更多的local search来增加更优解的寻找
+验证方法修改成k-fold
 
 """
 
 def HAPSO3(ps,data,features,div,Maxiters,label_train):
-    from sklearn.model_selection import train_test_split
+    from sklearn.model_selection import cross_val_score
     from sklearn.svm import SVC
     import numpy as np
     import random, math
@@ -371,7 +372,7 @@ def HAPSO3(ps,data,features,div,Maxiters,label_train):
     gbestvals = {}                       # 用于保存最优值
     iterbestvals = {}
     fp = {}                              # 用于保存进化因子
-
+    label_train = label_train.iloc[:,0]
     """
        初始化，根据权重分组选取
        速度区间为[-2,2]
@@ -391,10 +392,10 @@ def HAPSO3(ps,data,features,div,Maxiters,label_train):
         for a,b in enumerate(pos[i,:]):
             if b>0:
                 ind.append(a)
-        traindata = data[:,ind]
-        X_train, X_test, y_train, y_test = train_test_split(traindata,label_train, test_size=0.2, random_state=0)
-        clf = SVC(kernel='rbf', C=2).fit(X_train, y_train)
-        out[i] = clf.score(X_test, y_test)/(1+0.03*len(ind))
+        traindata = data[:,ind].copy()
+        clf = SVC(kernel='rbf', C=2)
+        scores = cross_val_score(clf, traindata,label_train,cv=5)
+        out[i] = scores.mean()/(1+0.03*len(ind))
 
     pbestpos = pos.copy()
     pbestval = out.copy()
@@ -442,9 +443,9 @@ def HAPSO3(ps,data,features,div,Maxiters,label_train):
                  if b>0:
                      ind.append(a)
              traindata = data[:,ind].copy()
-             X_train, X_test, y_train, y_test = train_test_split(traindata,label_train, test_size=0.2, random_state=0)
-             clf = SVC(kernel='rbf', C=2).fit(X_train, y_train)
-             tempout[q] = clf.score(X_test, y_test)/(1+0.03*len(ind))
+             clf = SVC(kernel='rbf', C=2)
+             scores = cross_val_score(clf, traindata, label_train, cv=5)
+             tempout[q] = scores.mean()/(1+0.03*len(ind))
              if tempout[q] > pbestval[q]:
                  pbestval[q] = tempout[q]
                  pbestpos[q,:] = pos[q,:]
@@ -475,9 +476,9 @@ def HAPSO3(ps,data,features,div,Maxiters,label_train):
                  if b>0:
                      ind.append(a)
             traindata = data[:,ind].copy()
-            X_train, X_test, y_train, y_test = train_test_split(traindata,label_train, test_size=0.2, random_state=0)
-            clf = SVC(kernel='rbf', C=2).fit(X_train, y_train)
-            tempPosval =  clf.score(X_test, y_test)/(1+0.03*len(ind))
+            clf = SVC(kernel='rbf', C=2)
+            scores = cross_val_score(clf, traindata, label_train, cv=5)
+            tempPosval =  scores.mean()/(1+0.03*len(ind))
              
             if tempPosval > gbestval:
                  gbestval=tempPosval
@@ -500,9 +501,9 @@ def HAPSO3(ps,data,features,div,Maxiters,label_train):
                         if b>0:
                            ind.append(a)
                     traindata = data[:,ind].copy()
-                    X_train, X_test, y_train, y_test = train_test_split(traindata,label_train, test_size=0.2, random_state=0)
-                    clf = SVC(kernel='rbf', C=2).fit(X_train, y_train)
-                    tempPs =  clf.score(X_test, y_test)/(1+0.03*len(ind))  
+                    clf = SVC(kernel='rbf', C=2)
+                    scores = cross_val_score(clf, traindata, label_train, cv=5)
+                    tempPs =  scores.mean()/(1+0.03*len(ind))  
                     if tempPs > tempout[s]:
                         tempout[s] = tempPs
                     else:
