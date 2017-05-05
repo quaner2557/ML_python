@@ -6,18 +6,16 @@ Created on Mon Apr 10 20:31:42 2017
 """
 
 # import breast_preprocessed.spydata
+def MIfilter(data,label,threshold):
+   import numpy as np
+   import pandas as pd
+   from sklearn.feature_selection import mutual_info_regression
 
-import numpy as np
-import pandas as pd
-from sklearn.feature_selection import mutual_info_regression
+   np.random.seed(0)
 
-np.random.seed(0)
-
-# First step: use mutual information to reduce the dimension
-mi = mutual_info_regression(breast_train_scaled.iloc[0:78,:], label_train)
-mi /= np.max(mi)
-
-
-# 0.349335 as the threshold ,the rest features are 1000                                                                  
-breast_train_scaled_1 = breast_train_scaled.iloc[:, mi > 0.41455]
-
+   # First step: use mutual information to reduce the dimension
+   mi = mutual_info_regression(data, label)
+   mi /= np.max(mi)                                                                  
+   breast_train_scaled_1 = breast_train_scaled.iloc[:, mi > threshold]
+   
+ return train_MI
