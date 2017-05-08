@@ -29,30 +29,33 @@ os.chdir("/media/quan/软件/AAAAA/ML_python/group")
 import APSOmodule
 from imp import reload
 reload(APSOmodule) 
-[gbestpos,gbestval,gbestvals,iterbestvals,pbestpos,pos] = APSOmodule.HAPSO3(50,data,50,10,2000,label_train)
+f=open('f.txt','w')
+for times in range(5):
+   [gbestpos,gbestval,gbestvals,iterbestvals,pbestpos,pos] = APSOmodule.HAPSO3(50,data,50,10,2000,label_train)
+   for gene in range(50):
+       if gbestpos[gene] == 1:
+          f.write(str(gene)+'\n')
+   f.write(str(gbestval)+'\n')
+f.close()
 
 
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
 import pandas as pd
+from sklearn.metrics import accuracy_score
 
-ind = [3462,12258]
-traindata = breast_train_scaled.iloc[:78,ind]
+ind = [376,373,10667]
 testdata = breast_test_scaled.iloc[:19,ind]
+traindata = breast_train_scaled.iloc[:78,ind]
 C_range = np.logspace(-2, 2, 10)
 gamma_range = np.logspace(-2, 2, 10)
 param_grid = dict(gamma=gamma_range, C=C_range)
 cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
 grid = GridSearchCV(SVC(), param_grid=param_grid, cv=cv)
 grid.fit(traindata, label_train)
-
-print("The best parameters are %s with a score of %0.2f"
-      % (grid.best_params_, grid.best_score_))
-      
-clf = SVC(kernel='rbf', C=2).fit(traindata, label_train)
-clf.score(testdata, label_test)
-clf.score(traindata, label_train)    
-
-
-
+clf =  SVC()
+clf.fit(traindata, label_train)
+y_pred = grid.predict(testdata)
+y_pred2 = clf.predict(testdata)
+print(accuracy_score(label_test, y_pred))
