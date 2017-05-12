@@ -150,6 +150,31 @@ for d in range(5):
                 ind.append(gene)
                 f.write(str(d)+' '+str(times)+' gbestval is '+str(gbestval)+'\n')
                 f.write(str(d)+' '+str(times)+' the choosed genes are '+str(ind)+'\n')
-f.close
+f.close()
     
+
+from sklearn.svm import SVC
+from sklearn.grid_search import GridSearchCV
+from sklearn.metrics import accuracy_score
+
+parameters = {'kernel':('linear', 'rbf'), 'C':np.logspace(-1, 3, 5), 'gamma':np.logspace(-2, 5, 8)}
+clf = GridSearchCV(SVC(), parameters)
+
+estimater1 = clf.fit(data_mrmr1, train1_label)
+estimater2 = clf.fit(data_mrmr2, train2_label)
+estimater3 = clf.fit(data_mrmr3, train3_label)
+estimater4 = clf.fit(data_mrmr4, train4_label)
+estimater5 = clf.fit(data_mrmr5, train5_label)
+
+y1_pred = estimater1.predict(test1)
+y2_pred = estimater2.predict(test2)
+y3_pred = estimater3.predict(test3)
+y4_pred = estimater4.predict(test4)
+y5_pred = estimater5.predict(test5)
+
+accuracy_score(test1_label, y1_pred)
+accuracy_score(test2_label, y2_pred)
+accuracy_score(test3_label, y3_pred)
+accuracy_score(test4_label, y4_pred)
+accuracy_score(test5_label, y5_pred)
 
