@@ -95,25 +95,25 @@ import 5fold_breast.spydata to replace up file
 
 from imp import reload
 
-# 先通过MI方法去除大部分特征，设置的threshold尽量使特征保持在1000左右
+# 先通过MI方法去除大部分特征，设置的threshold尽量使特征保持在500左右
 import filtermodule
 reload(filtermodule) 
 
-data_MI1 = filtermodule.MIfilter(train1,train1_label,0.35)
-data_MI2 = filtermodule.MIfilter(train2,train2_label,0.35)
-data_MI3 = filtermodule.MIfilter(train3,train3_label,0.35)
-data_MI4 = filtermodule.MIfilter(train4,train4_label,0.35)
-data_MI5 = filtermodule.MIfilter(train5,train5_label,0.35)
+data_MI1 = filtermodule.MIfilter(train1,train1_label,0.45)
+data_MI2 = filtermodule.MIfilter(train2,train2_label,0.45)
+data_MI3 = filtermodule.MIfilter(train3,train3_label,0.45)
+data_MI4 = filtermodule.MIfilter(train4,train4_label,0.45)
+data_MI5 = filtermodule.MIfilter(train5,train5_label,0.45)
 
 # 利用mrmr剩下100个特征左右
 import mrmrmodule
 reload(mrmrmodule)
 
 data_mrmr1 = mrmrmodule.mrmrfilter(data_MI1,train1_label,100)
-data_mrmr2 = mrmrmodule.mrmrfilter(data_MI1,train2_label,100)
-data_mrmr3 = mrmrmodule.mrmrfilter(data_MI1,train3_label,100)
-data_mrmr4 = mrmrmodule.mrmrfilter(data_MI1,train4_label,100)
-data_mrmr5 = mrmrmodule.mrmrfilter(data_MI1,train5_label,100)
+data_mrmr2 = mrmrmodule.mrmrfilter(data_MI2,train2_label,100)
+data_mrmr3 = mrmrmodule.mrmrfilter(data_MI3,train3_label,100)
+data_mrmr4 = mrmrmodule.mrmrfilter(data_MI4,train4_label,100)
+data_mrmr5 = mrmrmodule.mrmrfilter(data_MI5,train5_label,100)
 
 # 根据SVM权重对100个特征进行排序得到50个genes 
 from sklearn.svm import SVR
@@ -143,7 +143,7 @@ for d in range(5):
     for times in range(3):
         print(d)
         print(times)
-        [gbestpos,gbestval,gbestvals,iterbestvals,pbestpos,pos] = APSOmodule.HAPSO3(50,data_svmrfe[d],50,10,2000,label_APSO[d])
+        [gbestpos,gbestval,gbestvals,iterbestvals,pbestpos,pos] = APSOmodule.HAPSO3(50,data_svmrfe[d],50,10,1500,label_APSO[d])
         ind =[]
         for gene in range(50):
             if gbestpos[gene] == 1:
@@ -152,3 +152,4 @@ for d in range(5):
                 f.write(str(d)+' '+str(times)+' the choosed genes are '+str(ind)+'\n')
 f.close
     
+
