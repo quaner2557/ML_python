@@ -427,6 +427,11 @@ def HAPSO3(ps,data,features,div,Maxiters,label_train):
          for t in range(ps):
              count = 0 
              for p in range(features):
+                 if vel[t,p] > 2:
+                     vel[t,p] = 2
+                 elif vel[t,p] < -2:
+                     vel[t,p] = -2
+                        
                  if 1 / (1 + math.exp(-vel[t,p])) >=random.random():
                      pos[t,p] = 1
                      count += 1

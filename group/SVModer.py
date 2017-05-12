@@ -30,12 +30,25 @@ import APSOmodule
 from imp import reload
 reload(APSOmodule) 
 f=open('f.txt','w')
-for times in range(5):
-   [gbestpos,gbestval,gbestvals,iterbestvals,pbestpos,pos] = APSOmodule.HAPSO3(50,data,50,10,2000,label_train)
-   for gene in range(50):
-       if gbestpos[gene] == 1:
-          f.write(str(gene)+'\n')
-   f.write(str(gbestval)+'\n')
+for times in range(10):
+    print(times)
+    [gbestpos,gbestval,gbestvals,iterbestvals,pbestpos,pos] = APSOmodule.HAPSO3(50,data,50,10,500,label_train)
+    ind1 = []
+    ind2 = []
+    for gene in range(50):
+        if gbestpos[gene] == 1:
+            ind1.append(gene)
+            ind2.append(breast_train_50_oder[78,gene]-1)
+        testdata = breast_test_scaled.iloc[:19,ind2]
+        traindata = breast_train_scaled.iloc[:78,ind2]
+        clf =  SVC()
+        clf.fit(traindata, label_train)
+        y_pred = clf.predict(traindata)
+        y_pred2 = clf.predict(testdata)
+    f.write(str(accuracy_score(label_train, y_pred))+'  '+str(accuracy_score(label_test, y_pred2))+' ')
+    f.write(str(ind1)+' ')
+    f.write(str(ind2)+' ')
+    f.write(str(gbestval)+'\n')    
 f.close()
 
 
@@ -45,7 +58,27 @@ from sklearn.svm import SVC
 import pandas as pd
 from sklearn.metrics import accuracy_score
 
-ind = [376,373,10667]
+f=open('ff.txt','w')
+for i in range(50):
+    for j in np.arange(i,50):
+        for k in np.arange(j,50):
+            ind = [breast_train_50_oder[78,i]-1,breast_train_50_oder[78,j]-1,breast_train_50_oder[78,k]-1]
+            testdata = breast_test_scaled.iloc[:19,ind]
+            traindata = breast_train_scaled.iloc[:78,ind]
+            clf =  SVC()
+            clf.fit(traindata, label_train)
+            y_pred = clf.predict(traindata)
+            y_pred2 = clf.predict(testdata)
+            f.write(str(accuracy_score(label_train, y_pred))+'  '+str(accuracy_score(label_test, y_pred2))+'\n')   
+    print(i)       
+f.close()
+datatestt = pd.read_table('ff.txt',header=None,delim_whitespace=True)   
+datatestt.columns = ['A','B']
+aaa = datatestt.sort(columns='A')        
+import matplotlib.pyplot as plt
+plt.plot(aaa.iloc[:,0],aaa.iloc[:,1], 'ro')
+            
+ind = [12258.0, 376.0, 20506.0, 15925.0]
 testdata = breast_test_scaled.iloc[:19,ind]
 traindata = breast_train_scaled.iloc[:78,ind]
 C_range = np.logspace(-2, 2, 10)
@@ -54,8 +87,14 @@ param_grid = dict(gamma=gamma_range, C=C_range)
 cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
 grid = GridSearchCV(SVC(), param_grid=param_grid, cv=cv)
 grid.fit(traindata, label_train)
-clf =  SVC()
-clf.fit(traindata, label_train)
 y_pred = grid.predict(testdata)
-y_pred2 = clf.predict(testdata)
 print(accuracy_score(label_test, y_pred))
+
+for i in np.arange(0.01,2,0.1):
+        clf =  SVC(C=i)
+        clf.fit(traindata, label_train)
+        y_pred2 = clf.predict(testdata)
+        print(accuracy_score(label_test, y_pred2))
+
+
+
